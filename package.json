@@ -1,0 +1,14 @@
+{
+	"name": "scrscr",
+	"version": "1.0.0",
+	"main": "index.js",
+	"author": "Konstantin Ilchenko <kyle.mom.is.awesome@protonmail.com>",
+	"license": "MIT",
+	"dependencies": {
+		"chokidar": "^3.0.0",
+		"clipboardy": "^2.0.0",
+		"node-notifier": "^5.4.0",
+		"sharp": "^0.22.1",
+		"ssh2-sftp-client": "^2.5.0"
+	}
+}
