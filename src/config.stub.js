@@ -1,4 +1,4 @@
-module.exports = const config = {
+module.exports = {
 	screensDir: '~/Documents/Screenshots',
 	sftpHost:   'scr.example.com',
 	sftpPath:   '/uploads',
