@@ -7,6 +7,7 @@ const sharp = require('sharp');
 const {promisify} = require('util');
 const config = require('./config');
 
+const exec = promisify(require('child_process').exec);
 const readFile = promisify(fs.readFile);
 
 function timestamp() {
@@ -20,6 +21,11 @@ function timestamp() {
 
 function randomString(length = 5) {
 	return Math.random().toString(36).substring(2, 2 + length);
+}
+
+async function detectScreensDir() {
+	const {stdout} = await exec('defaults read com.apple.screencapture location');
+	return (stdout || '').replace(/\s/g, '');
 }
 
 async function getSftp() {
@@ -55,8 +61,14 @@ async function onScreenReceived(path) {
 
 	const filename = `${timestamp()}-${randomString()}.png`;
 
-	const sftp = await getSftp();
-	await sftp.put(buffer, `${config.sftpPath}/${filename}`);
+	try {
+		const sftp = await getSftp();
+		await sftp.put(buffer, `${config.sftpPath}/${filename}`);
+	} catch(e) {
+		console.error(`[ERROR] Upload failed: ${e.message}`);
+		notifier.notify({title: 'scrscr', message: `Upload failed: ${e.message}`});
+		return;
+	}
 
 	const publicLink = `${config.viewPath}/${filename}`;
 
@@ -66,8 +78,11 @@ async function onScreenReceived(path) {
 }
 
 async function main() {
+	const dirToWatch = config.screensDir || await detectScreensDir();
+	console.log(`[WATCH] ${dirToWatch}/*.png`);
+
 	const listener = chokidar.watch(
-		`${config.screensDir}/*.png`,
+		`${dirToWatch}/*.png`,
 		{persistent: true, ignoreInitial: true},
 	);
 

@@ -1,5 +1,5 @@
 module.exports = {
-	screensDir: '~/Documents/Screenshots',
+	screensDir: '~/Documents/Screenshots', // if empty, autodetect (MacOS only)
 	sftpHost:   'scr.example.com',
 	sftpPath:   '/uploads',
 	sftpUser:   'example',
