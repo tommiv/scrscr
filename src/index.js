@@ -9,6 +9,7 @@ const config = require('./config');
 
 const exec = promisify(require('child_process').exec);
 const readFile = promisify(fs.readFile);
+const unlink = promisify(fs.unlink);
 
 function timestamp() {
 	const dt = new Date();
@@ -75,6 +76,10 @@ async function onScreenReceived(path) {
 	clipboardy.writeSync(publicLink);
 	console.log(`[READY] ${publicLink}`);
 	notifier.notify({title: 'scrscr', message: publicLink, icon: publicLink});
+
+	if (config.remove) {
+		await unlink(path);
+	}
 }
 
 async function main() {

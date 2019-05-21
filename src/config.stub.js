@@ -5,4 +5,5 @@ module.exports = {
 	sftpUser:   'example',
 	sftpPass:   'password',
 	viewPath:   'https://scr.example.com/screens',
+	remove:     true,
 };
