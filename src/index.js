@@ -94,4 +94,9 @@ async function main() {
 	listener.on('add', onScreenReceived);
 }
 
+process.on('unhandledRejection', (reason, promise) => {
+	console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+	notifier.notify({title: 'scrscr', message: 'Unhandled rejection, check the console'});
+});
+
 main();
