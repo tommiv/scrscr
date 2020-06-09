@@ -40,20 +40,21 @@ async function getSftp() {
 }
 
 async function normalizeBuffer(buffer) {
-	const wrapper = sharp(buffer);
-	const meta = await wrapper.metadata();
+	return buffer;
+	// const wrapper = sharp(buffer);
+	// const meta = await wrapper.metadata();
 
 	// NB: can we rely on this?
-	if (meta.density < 100) {
-		return buffer;
-	}
+	// if (meta.density < 100) {
+		// return buffer;
+	// }
 
-	const dim = {
-		width:  Math.floor(meta.width / 2),
-		height: Math.floor(meta.height / 2),
-	};
+	// const dim = {
+	// 	width:  Math.floor(meta.width / 2),
+	// 	height: Math.floor(meta.height / 2),
+	// };
 
-	return await wrapper.resize(dim).toBuffer();
+	// return await wrapper.resize(dim).toBuffer();
 }
 
 async function onScreenReceived(path) {
