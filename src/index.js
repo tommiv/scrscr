@@ -4,6 +4,7 @@ import {promisify} from 'util';
 import chokidar from 'chokidar';
 import SFTPClient from 'ssh2-sftp-client';
 import clipboardy from 'clipboardy';
+import imgclibboard from 'img-clipboard';
 import notifier  from 'node-notifier';
 import sharp from 'sharp';
 import config from './config.js';
@@ -41,43 +42,51 @@ async function getSftp() {
 }
 
 async function normalizeBuffer(buffer) {
-	return buffer;
-	// const wrapper = sharp(buffer);
-	// const meta = await wrapper.metadata();
+	if (!config.downscale) {
+		return buffer;
+	}
+
+	const wrapper = sharp(buffer);
+	const meta = await wrapper.metadata();
 
 	// NB: can we rely on this?
-	// if (meta.density < 100) {
-		// return buffer;
-	// }
+	if (meta.density < 100) {
+		return buffer;
+	}
 
-	// const dim = {
-	// 	width:  Math.floor(meta.width / 2),
-	// 	height: Math.floor(meta.height / 2),
-	// };
+	const dim = {
+		width:  Math.floor(meta.width / 2),
+		height: Math.floor(meta.height / 2),
+	};
 
-	// return await wrapper.resize(dim).toBuffer();
+	return await wrapper.resize(dim).toBuffer();
 }
 
 async function onScreenReceived(path) {
-	let buffer = await readFile(path);
-	buffer = await normalizeBuffer(buffer);
+	if (config.action === 'clipboard') {
+		await imgclibboard.copyImg(path);
+		console.log(`[COPIED] ${path}`)
+	} else if (config.action === 'upload') {
+		let buffer = await readFile(path);
+		buffer = await normalizeBuffer(buffer);
 
-	const filename = `${timestamp()}-${randomString()}.png`;
+		const filename = `${timestamp()}-${randomString()}.png`;
 
-	try {
-		const sftp = await getSftp();
-		await sftp.put(buffer, `${config.sftpPath}/${filename}`);
-	} catch(e) {
-		console.error(`[ERROR] Upload failed: ${e.message}`);
-		notifier.notify({title: 'scrscr', message: `Upload failed: ${e.message}`});
-		return;
+		try {
+			const sftp = await getSftp();
+			await sftp.put(buffer, `${config.sftpPath}/${filename}`);
+		} catch(e) {
+			console.error(`[ERROR] Upload failed: ${e.message}`);
+			notifier.notify({title: 'scrscr', message: `Upload failed: ${e.message}`});
+			return;
+		}
+
+		const publicLink = `${config.viewPath}/${filename}`;
+
+		clipboardy.writeSync(publicLink);
+		console.log(`[UPLOADED] ${publicLink}`);
+		notifier.notify({title: 'scrscr', message: publicLink, contentImage: path});
 	}
-
-	const publicLink = `${config.viewPath}/${filename}`;
-
-	clipboardy.writeSync(publicLink);
-	console.log(`[READY] ${publicLink}`);
-	notifier.notify({title: 'scrscr', message: publicLink, icon: publicLink});
 
 	if (config.remove) {
 		await unlink(path);

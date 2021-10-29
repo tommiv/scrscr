@@ -6,4 +6,6 @@ export default {
 	sftpPass:   'password',
 	viewPath:   'https://scr.example.com/screens',
 	remove:     true,
+	downscale:  false,
+	action:     'clipboard', // OR 'upload'
 };
