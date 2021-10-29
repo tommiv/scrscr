@@ -1,13 +1,14 @@
-const fs = require('fs');
-const chokidar = require('chokidar');
-const SFTPClient = require('ssh2-sftp-client');
-const clipboardy = require('clipboardy');
-const notifier = require('node-notifier');
-const sharp = require('sharp');
-const {promisify} = require('util');
-const config = require('./config');
+import fs from 'fs';
+import child_process from 'child_process';
+import {promisify} from 'util';
+import chokidar from 'chokidar';
+import SFTPClient from 'ssh2-sftp-client';
+import clipboardy from 'clipboardy';
+import notifier  from 'node-notifier';
+import sharp from 'sharp';
+import config from './config.js';
 
-const exec = promisify(require('child_process').exec);
+const exec = promisify(child_process.exec);
 const readFile = promisify(fs.readFile);
 const unlink = promisify(fs.unlink);
 

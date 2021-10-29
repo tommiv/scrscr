@@ -4,11 +4,12 @@
 	"main": "index.js",
 	"author": "Konstantin Ilchenko <kyle.mom.is.awesome@protonmail.com>",
 	"license": "MIT",
+	"type": "module",
 	"dependencies": {
 		"chokidar": "^3.0.0",
-		"clipboardy": "^2.0.0",
-		"node-notifier": "^7.0.1",
-		"sharp": "^0.25.3",
-		"ssh2-sftp-client": "^5.1.2"
+		"clipboardy": "^3.0.0",
+		"node-notifier": "^10.0.0",
+		"sharp": "^0.29.2",
+		"ssh2-sftp-client": "^7.1.0"
 	}
 }
